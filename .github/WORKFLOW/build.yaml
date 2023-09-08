@@ -2,7 +2,7 @@ name: 'Build todo app and deploy into a cloud run service on GCP'
 
 on:
   push:
-    branches: [ "" ]
+    branches: [ "master" ]
   pull_request:
 
 permissions:
@@ -68,9 +68,9 @@ jobs:
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      # On push to "main", build or change infrastructure according to Terraform configuration files
+      # On push to "master", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
