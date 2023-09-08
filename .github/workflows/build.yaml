@@ -28,7 +28,7 @@ jobs:
 
     #Build the dockerfile
     - name: Docker build
-      run: docker build . -t ${{ secrets.DOCKER_USERNAME }}/todo_app_maxdrive
+      run: docker-compose up --build
 
     #Push the dockerfile to dockerhub
     - name: Docker push
