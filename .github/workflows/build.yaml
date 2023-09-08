@@ -23,7 +23,7 @@ jobs:
       uses: docker-practice/actions-setup-docker@master
 
     - name: Docker login
-      run: docker login -u=${ DOCKER_USERNAME } -p=${ DOCKER_PASSWORD }
+      run: docker login -u=${{ DOCKER_USERNAME }} -p=${{ DOCKER_PASSWORD }}
 
     #Build the dockerfile
     - name: Docker build
