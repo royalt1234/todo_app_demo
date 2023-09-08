@@ -1,0 +1,94 @@
+name: 'Build todo app and deploy into a cloud run service on GCP'
+
+on:
+  push:
+    branches: [ "" ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  docker:
+    name: 'Docker'
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps: 
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    #Docker install docker on the runner
+    - name: Docker install
+      uses: docker-practice/actions-setup-docker@master
+
+    - name: Docker login
+      run: docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+
+    #Build the dockerfile
+    - name: Docker build
+      run: docker build . -t ${DOCKER_USERNAME}/todo_app_maxdrive
+
+    #Push the dockerfile
+    - name: Docker push
+      run: docker push ${DOCKER_USERNAME}/todo_app_maxdrive
+
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: dev
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+        
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }} 
+
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -input=false
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      # On push to "main", build or change infrastructure according to Terraform configuration files
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve -input=false
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    # Generates the outputs which include the cloud run service url to reach our todo app.
+    - name: Terraform Ouptut
+      run: terraform output
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    # We want the runner to sleep for 2min which is more than enough to checkout the to-do app.
+    - name: Sleep for 120 seconds{2 minute}
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '120s'
+
+    # Destroy the TF resources after 2 minutes
+    - name: Terraform Destroy
+      run: terraform destroy -auto-approve -input=false
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
