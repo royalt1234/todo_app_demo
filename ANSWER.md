@@ -1,0 +1,14 @@
+## What is CI/CD ?
+CI/CD stands for Continuous Integration and Continuous Deployment/Delivery. It is a software development practice that involves continuously integrating code changes into a shared repository, and then automatically building, testing, and deploying those changes. This allows for faster development and deployment of new features. The goal of CI/CD is to catch and fix errors as early as possible in the development process, so that they don't become more difficult and expensive to fix later on. It also allows for faster delivery of new features and bug fixes to end-users.
+
+The acronym CI/CD has a few different meanings. The "CI" in CI/CD always refers to continuous integration. Successful CI means new code changes to an app are regularly built, tested, and merged to a shared repository, just like in our Flask App CI process.
+
+The "CD" in CI/CD refers to continuous delivery and/or continuous deployment, which are related concepts that sometimes get used interchangeably. Both are about automating further stages of the pipeline, but they’re sometimes used separately to illustrate just how much automation is happening. Continuous delivery usually means changes to an application are automatically bug tested and uploaded to a repository (like GitHub or a container registry), where they can then be deployed to a live production environment. It’s an answer to the problem of poor visibility and communication between dev and business teams. To that end, the purpose of continuous delivery is to ensure that it takes minimal effort to deploy new code.
+
+## Three Benefits of CircleCI over Github
+
+1. CircleCI support use with different version control systems like, GitHub, GitLab, and Bitbucket. But Github Actions works with repositories stored on GitHub only.
+
+2. CircleCI offers more flexibility when it comes to customizing your CI/CD pipelines. It allows you to define your workflows using configuration files `(.circleci/config.yml)`, giving you fine-grained control over your build, test, and deployment steps. While GitHub Actions is also customizable, CircleCI's YAML-based configuration offers more advanced customization options, including the ability to define complex workflows with dependencies between jobs.
+
+3. CircleCI offers advanced features like parallelism and workspace management, allowing you to run multiple jobs concurrently and efficiently manage data between them. This can significantly speed up your CI/CD pipelines. GitHub Actions also supports parallelism, but CircleCI's approach is often considered more powerful and flexible for complex use cases.
